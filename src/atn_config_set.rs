@@ -15,8 +15,6 @@ use crate::prediction_context::{MurmurHasherBuilder, PredictionContext};
 use crate::semantic_context::SemanticContext;
 
 pub struct ATNConfigSet {
-    cached_hash: u64,
-
     //todo looks like we need only iteration for configs
     // so i think we can replace configs and lookup with indexhashset
     config_lookup: HashMap<Key, usize, MurmurHasherBuilder>,
@@ -92,7 +90,6 @@ impl Hash for ATNConfigSet {
 impl ATNConfigSet {
     pub fn new_base_atnconfig_set(full_ctx: bool) -> ATNConfigSet {
         ATNConfigSet {
-            cached_hash: 0,
             config_lookup: HashMap::with_hasher(MurmurHasherBuilder {}),
             configs: vec![],
             conflicting_alts: Default::default(),
@@ -170,7 +167,6 @@ impl ATNConfigSet {
             existing.set_context(merged);
         } else {
             self.config_lookup.insert(key, self.configs.len());
-            self.cached_hash = 0;
             self.configs.push(config);
         }
         true
